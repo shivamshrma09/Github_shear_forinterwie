@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GITshare GitHub Profile Searcher</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      font-family: 'Inter', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .navbar {
+      width: 100vw;
+      max-width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+      padding: 0 36px;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #3182ce;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+    }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+    .nav-links a {
+      color: #2d3748;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover {
+      background: #3182ce;
+      color: #fff;
+    }
+    h1 {
+      margin-top: 40px;
+      color: #1a202c;
+      font-size: 2.5rem;
+      letter-spacing: 1.2px;
+      font-weight: 800;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .input-group {
+      margin: 32px 0 18px 0;
+      display: flex;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(50, 50, 93, 0.11);
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: #fff;
+    }
+    input {
+      padding: 14px 18px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      border: 1px solid #cbd5e0;
+      background: #fefefe;
+      transition: border 0.3s ease;
+      width: 260px;
+    }
+    input:focus {
+      border: 2px solid #3182ce;
+      outline: none;
+    }
+    button {
+      padding: 14px 24px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      border: none;
+      background: #3182ce;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #2c5282;
+    }
+    .profile {
+      margin-top: 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(44, 62, 80, 0.12);
+      width: 100%;
+      max-width: 470px;
+      padding: 32px 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      border: 1px solid #e2e8f0;
+    }
+    .profile img {
+      border-radius: 50%;
+      width: 110px;
+      height: 110px;
+      border: 3px solid #3182ce;
+      margin-bottom: 12px;
+      object-fit: cover;
+      background: #e2e8f0;
+    }
+    .download-btn {
+      margin-top: 20px;
+      background: #ed8936;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 15px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px #ed893633;
+      transition: background 0.2s;
+    }
+    .download-btn:hover { background: #dd6b20; }
+    ul { margin-top: 8px; list-style: none; padding: 0; width: 100%; }
+    li { margin-bottom: 12px; font-size: 1rem; }
+    .repo-desc { font-size: 0.95em; color: #4a5568; font-style: italic; }
+    @media (max-width: 600px) {
+      .navbar { padding: 0 10px; }
+      .logo { font-size: 1.3rem; }
+      .nav-links a { font-size: 1rem; padding: 6px 10px; }
+      .profile { max-width: 98vw; padding: 16px 6px 16px 6px; }
+      .profile img { width: 80px; height: 80px; }
+      .input-group { flex-direction: column; gap: 8px; padding: 10px 6px; }
+      input { width: 95vw; max-width: 98vw; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">
+      GITshare
+    </div>
+    <div class="nav-links">
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Features</a>
+    </div>
+  </div>
+  <h1>GitHub Profile Searcher</h1>
+  <div class="input-group">
+    <input type="text" id="username" placeholder="Enter GitHub username" onkeypress="if(event.key==='Enter'){getGitHubProfile();}">
+    <button onclick="getGitHubProfile()">Search</button>
+  </div>
+  <div id="profile" class="profile" style="display: none;">
+    <img id="avatar" src="" alt="Avatar">
+    <h3 id="name"></h3>
+    <p id="bio"></p>
+    <div class="data">
+      <p><strong>Username:</strong> <span id="login">&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+      <p><strong>Location:</strong> <span id="location"> &nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+      <p><strong>Followers:</strong> <span id="followers">&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+      <p><strong>Following:</strong> <span id="following">&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+      <p><strong>Repos:</strong> <span id="repos">&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+      <p><strong>Profile:</strong> <a id="profileLink" href="" target="_blank">Visit</a></p>
+      <p><strong>Repositories:</strong> <a id="repositorys" href="" target="_blank">Visit All</a></p>
+    </div>
+    <div class="repos-title" style="margin-top:18px;font-weight:700;">Top 5 Repositories</div>
+    <ul id="repoList"></ul>
+    <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+  </div>
+  <script>
+    let currentProfile = null;
+    let currentRepos = [];
+
+    async function getGitHubProfile() {
+      const username = document.getElementById("username").value.trim();
+      if (!username) {
+        alert("Please enter a GitHub username!");
+        return;
+      }
+      const url = `https://api.github.com/users/${username}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          alert("User not found!");
+          document.getElementById("profile").style.display = "none";
+          return;
+        }
+        const data = await response.json();
+        currentProfile = data;
+
+        // Show profile data
+        document.getElementById("avatar").src = data.avatar_url;
+        document.getElementById("name").textContent = data.name || "No Name";
+        document.getElementById("bio").textContent = data.bio || "No Bio";
+        document.getElementById("login").textContent = data.login;
+        document.getElementById("location").textContent = data.location || "Unknown";
+        document.getElementById("followers").textContent = data.followers;
+        document.getElementById("following").textContent = data.following;
+        document.getElementById("repos").textContent = data.public_repos;
+        document.getElementById("profileLink").href = data.html_url;
+        document.getElementById("repositorys").href = `${data.html_url}?tab=repositories`;
+        document.getElementById("profile").style.display = "flex";
+
+        // Fetch top 5 repos (by stargazers_count, fallback to created)
+        let repoResponse = await fetch(data.repos_url + '?per_page=100');
+        let repos = await repoResponse.json();
+        repos = repos
+          .sort((a, b) => (b.stargazers_count - a.stargazers_count) || (new Date(b.created_at) - new Date(a.created_at)))
+          .slice(0, 5);
+        currentRepos = repos;
+
+        // Show repos in HTML
+        const repoList = document.getElementById("repoList");
+        repoList.innerHTML = "";
+        repos.forEach((repo) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>
+            <div class="repo-desc">${repo.description ? repo.description : 'No description'}</div>`;
+          repoList.appendChild(li);
+        });
+      } catch (error) {
+        document.getElementById("profile").style.display = "none";
+        alert("Something went wrong!");
+      }
+    }
+
+    async function downloadPDF() {
+      if (!currentProfile) return;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      let y = 20;
+
+      // 1. Draw user avatar (photo)
+      const avatarUrl = currentProfile.avatar_url;
+      try {
+        const imgResp = await fetch(avatarUrl);
+        const imgBlob = await imgResp.blob();
+        const reader = new FileReader();
+        reader.readAsDataURL(imgBlob);
+        await new Promise(resolve => reader.onloadend = resolve);
+        const imgData = reader.result;
+        doc.addImage(imgData, 'JPEG', 80, y, 50, 50); // center top
+      } catch (e) {
+        // ignore image error
+      }
+      y += 55; // less space so bio is just below photo
+
+      // 2. Bio (just below image, bold label)
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(44, 62, 80);
+      doc.text("Bio:", 15, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(12);
+      doc.setTextColor(90, 100, 120);
+      doc.text(currentProfile.bio || "No Bio", 33, y, { maxWidth: 160 });
+      y += 15; // some space after bio
+
+      // 3. Other details (labels bold & bigger, less space)
+      function labelValue(label, value) {
+        doc.setFontSize(13);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(44, 62, 80);
+        doc.text(label, 15, y);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(13);
+        doc.setTextColor(49, 130, 206);
+        doc.text(value, 15 + doc.getTextWidth(label) + 2, y);
+        y += 8; // less space
+      }
+      labelValue("Name:", currentProfile.name || "No Name");
+      labelValue("Username:", currentProfile.login);
+      labelValue("Followers:", String(currentProfile.followers));
+      labelValue("Following:", String(currentProfile.following));
+      labelValue("Location:", currentProfile.location || "Unknown");
+      labelValue("Public Repos:", String(currentProfile.public_repos));
+
+      // 4. Profile and repo links
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(44, 62, 80);
+      doc.textWithLink("GitHub Profile", 15, y, { url: currentProfile.html_url });
+      y += 8;
+      doc.textWithLink("All Repositories", 15, y, { url: `${currentProfile.html_url}?tab=repositories` });
+      y += 13;
+
+      // 5. Top 5 repos
+      doc.setFontSize(14);
+      doc.setTextColor(44, 62, 80);
+      doc.setFont('helvetica', 'bold');
+      doc.text("Top 5 Repositories:", 15, y);
+      y += 9;
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      currentRepos.forEach((repo, idx) => {
+        doc.setTextColor(49, 130, 206);
+        doc.textWithLink(`${idx + 1}. ${repo.name}`, 18, y, { url: repo.html_url });
+        y += 6;
+        doc.setFontSize(11);
+        doc.setTextColor(90, 100, 120);
+        doc.text(repo.description ? repo.description : "No description", 21, y, { maxWidth: 170 });
+        y += 10;
+        doc.setFontSize(12);
+      });
+
+      doc.save(`${currentProfile.login}-profile.pdf`);
+    }
+  </script>
+</body>
+</html>
